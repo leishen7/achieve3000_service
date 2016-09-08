@@ -5,7 +5,7 @@ public enum ErrorCode {
 	SYSTEM_ERROR(102,"System error"),
 	
 	NULL_ORDER_NUMBER(201,"The order number is empty"),
-	INVALID_ORDER_NUMBER(202,"The order number is empty");
+	INVALID_ORDER_NUMBER(202,"The order number is invalid");
 	private ErrorCode(int code, String desciption) {
 		this.code = code;
 		this.desciption = desciption;
