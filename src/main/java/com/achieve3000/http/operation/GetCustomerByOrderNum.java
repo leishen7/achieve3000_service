@@ -48,6 +48,9 @@ public class GetCustomerByOrderNum extends AbstractOperator<QueryStringData, Ser
 		}catch(NumberFormatException ne){
 			return ServiceResponse.Error().errorCode(ErrorCode.INVALID_ORDER_NUMBER).build();
 		}
+		if(orderNum<0 || orderNum>5){
+			return ServiceResponse.Error().errorCode(ErrorCode.INVALID_ORDER_NUMBER).build();
+		}
 		try{
 			return ServiceResponse.Ok().content(orderDAO.getCustomerList(orderNum)).build();
 		}catch(Exception e){
