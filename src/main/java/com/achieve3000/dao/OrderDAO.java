@@ -37,7 +37,7 @@ public class OrderDAO {
 		}else{
 			sqlStr=QUERY_CUSTOMER_BY_ORDER_NUM;
 		}
-		return jt.queryForList(sqlStr,new Object[]{},String.class);
+		return jt.queryForList(sqlStr,new Object[]{new Integer(orderNum)},String.class);
 	}
 	
 	public List<String> getHighValueCustomerList() throws Exception{			
