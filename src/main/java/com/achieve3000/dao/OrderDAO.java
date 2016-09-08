@@ -20,6 +20,9 @@ public class OrderDAO {
 	
 	private final static String QUERY_CUSTOMER_BY_ORDER_NUM_0 = "select CustomerName from Customers where CustomerID not in (select distinct CustomerID from  orders)"; 
 	
+	private final static String QUERY_CUSTOMER_BY_ORDER_NUM_OPTIMIZED = "select customerName from customers c INNER JOIN (SELECT c.customerId, count(orderId) orderNum FROM Customers c LEFT JOIN Orders o ON   c.customerId = o.customerId group by c.customerId) co ON c.customerId =co.customerId where co.orderNum =?";
+	
+	
 	private final static String QUERY_CUSTOMER_HIGH_VALUE="select CustomerName from Customers where CustomerID  in "+
 	"(select CustomerID from (select o.CustomerID,o.OrderID,SUM(od.Quantity*p.Price) amount from  orders o INNER JOIN orderdetails od ON o.OrderID=od.OrderID" +
 	" INNER JOIN Products p ON od.ProductID=p.ProductID group by CustomerID,OrderID) co group by CustomerID having avg(amount)>=1000)";
@@ -31,12 +34,13 @@ public class OrderDAO {
 	}
 	public List<String> getCustomerList(int orderNum) throws Exception{	
 		
-		String sqlStr;		
+		String sqlStr=QUERY_CUSTOMER_BY_ORDER_NUM_OPTIMIZED;	
+		/*
 		if(orderNum==0){
 			sqlStr=QUERY_CUSTOMER_BY_ORDER_NUM_0;
 		}else{
 			sqlStr=QUERY_CUSTOMER_BY_ORDER_NUM;
-		}
+		}*/
 		return jt.queryForList(sqlStr,new Object[]{new Integer(orderNum)},String.class);
 	}
 	
