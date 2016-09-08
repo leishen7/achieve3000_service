@@ -1,0 +1,58 @@
+<configuration>
+    <appender name="DebugLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.dir}/log/app.debug</file>
+        <append>false</append>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+        <fileNamePattern>${log.dir}/debug/achieve3000_service.log.%i</fileNamePattern>
+        <minIndex>1</minIndex>
+        <maxIndex>10</maxIndex>
+    </rollingPolicy>
+    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+        <maxFileSize>500KB</maxFileSize>
+    </triggeringPolicy>
+        
+    </appender>
+    
+        <appender name="ErrorLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.dir}/log/app.error</file>
+        <append>false</append>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+        <fileNamePattern>${log.dir}/debug/app.log.%i</fileNamePattern>
+        <minIndex>1</minIndex>
+        <maxIndex>10</maxIndex>
+    </rollingPolicy>
+    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+        <maxFileSize>500KB</maxFileSize>
+    </triggeringPolicy>
+        
+    </appender>
+
+    <root level="DEBUG">
+        <appender-ref ref="DebugLog" />
+    </root>
+    
+   <root level="ERROR">
+        <appender-ref ref="ErrorLog" />
+    </root>
+    
+    <logger name="com.nucome" >
+		<level value="BEBUG" />
+	</logger>
+
+        <logger name="javax.mail" >
+                <level value="ERROR" />
+        </logger>
+	
+	<logger name="org.springframework" >
+		<level value="ERROR" />
+	</logger>
+	<logger name="org.eclipse" >
+		<level value="ERROR" />
+	</logger>
+</configuration>

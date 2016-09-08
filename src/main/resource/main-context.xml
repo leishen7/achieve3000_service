@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+		
+		<context:annotation-config />
+		<tx:annotation-driven />
+		<context:component-scan base-package="com.achieve3000" />
+
+	<import resource="classpath:data-source-context.xml" />
+
+	<bean id="springProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="locations">
+			<list>
+				<value>classpath:database.properties</value>
+				<value>classpath:services.properties</value>
+			</list>		
+		</property>
+	</bean>
+
+	<bean id="propertiesConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="properties" ref="springProperties" />
+		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
+		<property name="ignoreUnresolvablePlaceholders" value="false" />
+		<property name="order" value="1" />
+	</bean>
+	
+	<bean id="restfulService" class="com.achieve3000.http.service.RestfulService" init-method="init">
+		<constructor-arg index="0" value="${server.http.port}" />
+		<constructor-arg index="1" value="${server.maximum_thread_number}" />
+		<constructor-arg index="2" ref="requestHandler"	/>			
+	</bean>
+	<bean id="requestHandler" class="com.achieve3000.http.service.HttpRequestHandler">
+		<constructor-arg index="0" ref="delegator" />
+		<constructor-arg index="1" ref="contentParserFactory" />
+	</bean>
+	
+	<bean id="contentParserFactory" class="com.achieve3000.http.service.ContentParserFactory">
+		<constructor-arg index="0" ref="requestParsers" />
+		<constructor-arg index="1" ref="responseMarshallers" />
+	</bean>
+	
+	<bean id="requestParsers" class="java.util.HashMap">
+		<constructor-arg>
+			<map key-type="java.lang.String" value-type="com.achieve3000.http.core.RequestParser">
+				<entry key="JSON" value-ref="jsonRequestParser"/>
+			</map>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="jsonRequestParser" class="com.achieve3000.http.service.JsonRequestParser" />
+	<bean id="requestParser" class="com.achieve3000.http.request.QueryStringParser" />
+	
+	<bean id="responseMarshallers" class="java.util.HashMap">
+		<constructor-arg>
+			<map key-type="java.lang.String" value-type="com.achieve3000.http.service.ContentResponseMarshaller">
+				<entry key="JSON" value-ref="jsonResponseMarshaller"/>
+			</map>
+		</constructor-arg>
+	</bean>
+	<bean id="jsonResponseMarshaller" class="com.achieve3000.http.service.JsonResponseMarshaller" />
+	
+	
+	<bean id="delegator" class="com.achieve3000.http.service.OperationDelegator" >
+		<constructor-arg ref="operationFactory" />
+	</bean>
+	<bean id="operationFactory" class="com.achieve3000.http.core.OperationFactory">
+		<constructor-arg ref="operationMap" />
+	</bean>
+	<bean id="operationMap" class="java.util.HashMap">
+		<constructor-arg>
+			<map key-type="java.lang.String" value-type="com.achieve3000.http.core.AbstractOperator">
+				<entry key="getCustomerByOrderNum" value-ref="getCustomerByOrderNum"/>
+				<entry key="getHighValueCustomer" value-ref="GetHighValueCustomer"/>
+			</map>
+		</constructor-arg>
+	</bean>
+
+	
+
+
+</beans>
